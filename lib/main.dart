@@ -5,6 +5,8 @@ import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/about_screen.dart';
+import 'screens/message_screen.dart';  
+import 'screens/expense_screen.dart';   
 import 'widgets/custom_bottom_nav.dart';
 import 'widgets/custom_fab.dart';
 
@@ -25,10 +27,12 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
-        '/home': (context) => const MainScreen(), // ganti ke MainScreen
+        '/home': (context) => const MainScreen(), 
         '/profile': (context) => const ProfileScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/about': (context) => const AboutScreen(),
+        '/messages': (context) => const MessageScreen(),   
+        '/expense': (context) => const ExpenseScreen(),  
       },
     );
   }
@@ -60,7 +64,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: _pages[_selectedIndex],
       floatingActionButton: CustomFAB(
         onPressed: () {

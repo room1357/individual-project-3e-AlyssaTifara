@@ -41,7 +41,13 @@ class LoginScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: const Text("LOGIN"),
+              child: const Text(
+                "LOGIN",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             Row(
@@ -50,11 +56,18 @@ class LoginScreen extends StatelessWidget {
                 const Text("Belum punya akun? "),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const RegisterScreen()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                    );
                   },
-                  child: const Text("Register",
-                      style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    "Register",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 )
               ],
             )

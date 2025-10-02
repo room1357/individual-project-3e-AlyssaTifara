@@ -18,10 +18,14 @@ class HomeScreen extends StatelessWidget {
             children: [
               Icon(icon, size: 50, color: color),
               const SizedBox(height: 12),
-              Text(title,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ),
@@ -65,9 +69,10 @@ class HomeScreen extends StatelessWidget {
                 Text(
                   "Nama User",
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.black87),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
                 ),
                 Text(
                   "user@email.com",
@@ -90,7 +95,9 @@ class HomeScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.message),
             title: const Text("Messages"),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, '/messages'); // ✅ ke MessageScreen
+            },
           ),
           ListTile(
             leading: const Icon(Icons.info),
@@ -109,7 +116,9 @@ class HomeScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.attach_money),
             title: const Text("Expense"),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, '/expense'); // ✅ ke ExpenseScreen
+            },
           ),
           const Divider(),
           ListTile(
