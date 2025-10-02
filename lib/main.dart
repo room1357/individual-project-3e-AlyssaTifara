@@ -17,8 +17,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        useMaterial3: true, // pakai Material 3 biar lebih fresh
       ),
+      // Awal aplikasi buka Login
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginScreen(),
