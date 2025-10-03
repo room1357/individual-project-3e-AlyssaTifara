@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
-import 'screens/profile_screen.dart';
-import 'screens/settings_screen.dart';
-import 'screens/about_screen.dart';
-import 'screens/message_screen.dart';  
-import 'screens/expense_screen.dart';   
+import 'screens/homescreen/profile_screen.dart';
+import 'screens/homescreen/settings_screen.dart';
+import 'screens/homescreen/about_screen.dart';
+import 'screens/message_screen.dart';
 import 'widgets/custom_bottom_nav.dart';
 import 'widgets/custom_fab.dart';
 
@@ -27,18 +26,16 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
-        '/home': (context) => const MainScreen(), 
+        '/home': (context) => const MainScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/about': (context) => const AboutScreen(),
-        '/messages': (context) => const MessageScreen(),   
-        '/expense': (context) => const ExpenseScreen(),  
+        '/messages': (context) => const MessagesScreen(),
       },
     );
   }
 }
 
-// 🔹 Screen utama dengan BottomNav + FAB
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -50,9 +47,9 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = const [
-    HomeScreen(),
-    ProfileScreen(),
-    SettingsScreen(),
+    HomeScreen(),    // index 0 -> Home
+    MessagesScreen(), // index 1 -> Messages (sebagai contoh)
+    ProfileScreen(), // index 2 -> Profile
   ];
 
   void _onNavTap(int index) {
