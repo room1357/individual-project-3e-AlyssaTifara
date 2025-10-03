@@ -47,9 +47,9 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = const [
-    HomeScreen(),    // index 0 -> Home
-    MessagesScreen(), // index 1 -> Messages (sebagai contoh)
-    ProfileScreen(), // index 2 -> Profile
+    HomeScreen(),
+    MessagesScreen(),
+    ProfileScreen(),
   ];
 
   void _onNavTap(int index) {

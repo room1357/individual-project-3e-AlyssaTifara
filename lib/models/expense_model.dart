@@ -1,24 +1,3 @@
-// class Expense {
-//   final String title;
-//   final String description;
-//   final double amount;
-//   final DateTime date;
-//   final String category;
-
-//   Expense({
-//     required this.title,
-//     required this.description,
-//     required this.amount,
-//     required this.date,
-//     required this.category,
-//   });
-
-//   @override
-//   String toString() {
-//     return 'Expense(title: $title, amount: $amount, date: $date, category: $category)';
-//   }
-// }
-
 class Expense {
   final String title;
   final String category;
@@ -32,4 +11,3 @@ class Expense {
     required this.description,
   });
 }
-
