@@ -12,7 +12,10 @@ class RegisterScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("Create Account", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text(
+              "Create Account",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 20),
             TextField(
               decoration: const InputDecoration(
@@ -56,7 +59,13 @@ class RegisterScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: const Text("REGISTER"),
+              child: const Text(
+                "REGISTER",
+                style: TextStyle(
+                  color: Colors.white,        
+                  fontWeight: FontWeight.bold 
+                ),
+              ),
             ),
           ],
         ),
