@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
+import '../../models/category_model.dart';
 import 'expense_list_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  Widget _buildCategoryCard(
-      BuildContext context, String title, IconData icon, Color color) {
+  Widget _buildCategoryCard(BuildContext context, Category category) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
-          // Navigasi ke ExpenseScreen sesuai kategori
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ExpenseScreen(category: title),
+              builder: (context) => ExpenseListScreen(
+                initialCategory: category.name,
+              ),
             ),
           );
         },
@@ -24,10 +25,10 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 50, color: color),
+              Icon(category.icon, size: 50, color: category.color),
               const SizedBox(height: 12),
               Text(
-                title,
+                category.name,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 16,
@@ -45,7 +46,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home"),
+        title: const Text("Kategori Pengeluaran"),
         backgroundColor: Colors.blue,
       ),
       body: Padding(
@@ -54,16 +55,8 @@ class HomeScreen extends StatelessWidget {
           crossAxisCount: 2,
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
-          children: [
-            _buildCategoryCard(
-                context, "Kebutuhan Pokok", Icons.fastfood, Colors.green),
-            _buildCategoryCard(
-                context, "Produk Segar", Icons.local_grocery_store, Colors.orange),
-            _buildCategoryCard(
-                context, "Produk Kebersihan", Icons.cleaning_services, Colors.purple),
-            _buildCategoryCard(
-                context, "Produk Bernilai Tinggi", Icons.security, Colors.red),
-          ],
+          children:
+              categories.map((category) => _buildCategoryCard(context, category)).toList(),
         ),
       ),
     );

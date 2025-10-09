@@ -5,12 +5,17 @@ import 'screens/home_screen.dart';
 import 'screens/homescreen/profile_screen.dart';
 import 'screens/homescreen/settings_screen.dart';
 import 'screens/homescreen/about_screen.dart';
+import 'screens/expense_list_screen.dart';
 import 'screens/message_screen.dart';
 import 'widgets/custom_bottom_nav.dart';
 import 'widgets/custom_fab.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
-  runApp(const MyApp());
+  initializeDateFormatting('id_ID', null).then((_) {
+    runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -21,7 +26,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Checkout App',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        useMaterial3: true, // ✅ tampilan modern (Material 3)
+      ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('id', 'ID'),
+      ],
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginScreen(),
@@ -48,7 +64,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = const [
     HomeScreen(),
-    MessagesScreen(),
+    ExpenseListScreen(),
     ProfileScreen(),
   ];
 
@@ -62,7 +78,7 @@ class _MainScreenState extends State<MainScreen> {
     return Drawer(
       child: Column(
         children: [
-          // 🔹 Header dengan gradient
+          // 🔹 Header dengan gradient background
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 20),
@@ -106,28 +122,40 @@ class _MainScreenState extends State<MainScreen> {
                 ListTile(
                   leading: const Icon(Icons.person),
                   title: const Text("Profile"),
-                  onTap: () => Navigator.pushNamed(context, '/profile'),
+                  onTap: () {
+                    Navigator.pop(context); // ✅ Tutup drawer
+                    Navigator.pushNamed(context, '/profile');
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.message),
                   title: const Text("Messages"),
-                  onTap: () => Navigator.pushNamed(context, '/messages'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/messages');
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.info),
                   title: const Text("About"),
-                  onTap: () => Navigator.pushNamed(context, '/about'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/about');
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.settings),
                   title: const Text("Settings"),
-                  onTap: () => Navigator.pushNamed(context, '/settings'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/settings');
+                  },
                 ),
               ],
             ),
           ),
 
-          // 🔹 Tombol logout di bawah sendiri
+          // 🔹 Tombol Logout di bawah sendiri
           const Divider(),
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
@@ -137,7 +165,10 @@ class _MainScreenState extends State<MainScreen> {
                 "Logout",
                 style: TextStyle(color: Colors.red),
               ),
-              onTap: () => Navigator.pushReplacementNamed(context, '/login'),
+              onTap: () {
+                Navigator.pop(context); // ✅ Tutup drawer dulu
+                Navigator.pushReplacementNamed(context, '/login');
+              },
             ),
           ),
         ],
