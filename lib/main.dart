@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pemrograman_mobile/logic/user_manager.dart';
+import 'package:pemrograman_mobile/models/user_model.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
@@ -14,12 +16,14 @@ import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
   initializeDateFormatting('id_ID', null).then((_) {
-    runApp(const MyApp());
+    runApp(MyApp());
   });
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final UserManager _userManager = UserManager();
+
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +44,8 @@ class MyApp extends StatelessWidget {
       ],
       initialRoute: '/login',
       routes: {
-        '/login': (context) => const LoginScreen(),
-        '/register': (context) => const RegisterScreen(),
+        '/login': (context) => LoginScreen(userManager: _userManager),
+        '/register': (context) => RegisterScreen(userManager: _userManager),
         '/home': (context) => const MainScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/settings': (context) => const SettingsScreen(),
@@ -61,12 +65,28 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  User? _currentUser;
 
-  final List<Widget> _pages = const [
-    HomeScreen(),
-    ExpenseListScreen(),
-    ProfileScreen(),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final user = ModalRoute.of(context)!.settings.arguments as User?;
+    if (user != null) {
+      _currentUser = user;
+    }
+    _pages = [
+      const HomeScreen(),
+      const ExpenseListScreen(),
+      ProfileScreen(user: _currentUser),
+    ];
+  }
 
   void _onNavTap(int index) {
     setState(() {
@@ -91,23 +111,23 @@ class _MainScreenState extends State<MainScreen> {
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                CircleAvatar(
+              children: [
+                const CircleAvatar(
                   radius: 35,
                   backgroundImage: AssetImage("assets/profile.jpg"),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
-                  "Nama User",
-                  style: TextStyle(
+                  _currentUser?.fullName ?? "Nama User",
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                     color: Colors.white,
                   ),
                 ),
                 Text(
-                  "user@email.com",
-                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                  _currentUser?.email ?? "user@email.com",
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
                 ),
               ],
             ),

@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:pemrograman_mobile/logic/user_manager.dart';
 
-class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  final UserManager userManager;
+
+  const RegisterScreen({super.key, required this.userManager});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _fullNameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +31,7 @@ class RegisterScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             TextField(
+              controller: _fullNameController,
               decoration: const InputDecoration(
                 labelText: 'Full Name',
                 border: OutlineInputBorder(),
@@ -26,6 +40,7 @@ class RegisterScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: _emailController,
               decoration: const InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
@@ -34,6 +49,7 @@ class RegisterScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: _usernameController,
               decoration: const InputDecoration(
                 labelText: 'Username',
                 border: OutlineInputBorder(),
@@ -42,6 +58,7 @@ class RegisterScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: _passwordController,
               obscureText: true,
               decoration: const InputDecoration(
                 labelText: 'Password',
@@ -52,7 +69,13 @@ class RegisterScreen extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/home');
+                widget.userManager.registerUser(
+                  _fullNameController.text,
+                  _emailController.text,
+                  _usernameController.text,
+                  _passwordController.text,
+                );
+                Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,

@@ -38,7 +38,7 @@ class ExpenseManager {
       id: 'e5',
       title: "Beras",
       category: "Kebutuhan Pokok",
-      amount: 50000,
+      amount: 75000,
       description: "Beras kualitas medium 5kg",
       date: DateTime.now(),
     ),

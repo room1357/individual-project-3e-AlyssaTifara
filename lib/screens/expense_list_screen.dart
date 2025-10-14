@@ -133,7 +133,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final categories = ['Semua', ..._allExpenses.map((e) => e.category).toSet().toList()];
+    final categories = ['Semua', ..._allExpenses.map((e) => e.category).toSet()];
 
     return Scaffold(
       appBar: AppBar(

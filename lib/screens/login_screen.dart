@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:pemrograman_mobile/logic/user_manager.dart';
 import 'register_screen.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  final UserManager userManager;
+
+  const LoginScreen({super.key, required this.userManager});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +27,7 @@ class LoginScreen extends StatelessWidget {
             const Icon(Icons.person, size: 100, color: Colors.blue),
             const SizedBox(height: 32),
             TextField(
+              controller: _usernameController,
               decoration: const InputDecoration(
                 labelText: 'Username',
                 border: OutlineInputBorder(),
@@ -24,6 +36,7 @@ class LoginScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: _passwordController,
               obscureText: true,
               decoration: const InputDecoration(
                 labelText: 'Password',
@@ -34,7 +47,20 @@ class LoginScreen extends StatelessWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/home');
+                final user = widget.userManager.loginUser(
+                  _usernameController.text,
+                  _passwordController.text,
+                );
+                if (user != null) {
+                  Navigator.pushReplacementNamed(context, '/home', arguments: user);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Invalid username or password'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
@@ -58,7 +84,9 @@ class LoginScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              RegisterScreen(userManager: widget.userManager)),
                     );
                   },
                   child: const Text(
