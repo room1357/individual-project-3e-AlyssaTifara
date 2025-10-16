@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../logic/expense_manager.dart';
 import '../models/expense_model.dart';
+import 'edit_expense_screen.dart';
 
 class ExpenseListScreen extends StatefulWidget {
   final String? initialCategory;
@@ -39,8 +40,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             expense.title.toLowerCase().contains(_searchController.text.toLowerCase()) ||
             expense.description.toLowerCase().contains(_searchController.text.toLowerCase());
 
-        bool matchesCategory = _selectedCategory == 'Semua' ||
-            expense.category == _selectedCategory;
+        bool matchesCategory =
+            _selectedCategory == 'Semua' || expense.category == _selectedCategory;
 
         return matchesSearch && matchesCategory;
       }).toList();
@@ -124,6 +125,53 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                       style: const TextStyle(fontSize: 16, color: Colors.grey)),
                 ],
               ),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.edit),
+                label: const Text('Edit Pengeluaran'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context); // Tutup modal sebelum navigasi ke edit
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditExpenseScreen(
+                        expense: expense,
+                        onUpdateExpense: (updatedExpense) {
+                          setState(() {
+                            final index = _allExpenses.indexOf(expense);
+                            if (index != -1) {
+                              _allExpenses[index] = updatedExpense;
+                            }
+                            _filterExpenses();
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.delete),
+                label: const Text('Hapus Pengeluaran'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    _allExpenses.remove(expense);
+                    _filterExpenses();
+                  });
+                },
+              ),
             ],
           ),
         );
@@ -144,7 +192,6 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       ),
       body: Column(
         children: [
-          // Search bar
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: TextField(
@@ -159,8 +206,6 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               onChanged: (value) => _filterExpenses(),
             ),
           ),
-
-          // Category filter
           SizedBox(
             height: 50,
             child: ListView(
@@ -184,8 +229,6 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               }).toList(),
             ),
           ),
-
-          // Expense list dengan looping manual
           Expanded(
             child: _filteredExpenses.isEmpty
                 ? const Center(child: Text('Tidak ada pengeluaran ditemukan'))
@@ -194,7 +237,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                       children: [
                         for (var expense in _filteredExpenses)
                           Card(
-                            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                            margin:
+                                const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                             child: ListTile(
                               leading: CircleAvatar(
                                 backgroundColor: _getCategoryColor(expense.category),

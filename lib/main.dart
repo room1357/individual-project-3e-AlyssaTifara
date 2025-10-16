@@ -9,6 +9,7 @@ import 'screens/homescreen/settings_screen.dart';
 import 'screens/homescreen/about_screen.dart';
 import 'screens/expense_list_screen.dart';
 import 'screens/message_screen.dart';
+import 'screens/add_expense_screen.dart'; // ✅ tambahkan ini
 import 'widgets/custom_bottom_nav.dart';
 import 'widgets/custom_fab.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
       title: 'Checkout App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        useMaterial3: true, // ✅ tampilan modern (Material 3)
+        useMaterial3: true,
       ),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -51,6 +52,9 @@ class MyApp extends StatelessWidget {
         '/settings': (context) => const SettingsScreen(),
         '/about': (context) => const AboutScreen(),
         '/messages': (context) => const MessagesScreen(),
+
+        // ✅ route baru buat floating action button
+        '/add_expense': (context) => const AddExpenseScreen(),
       },
     );
   }
@@ -67,25 +71,28 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   User? _currentUser;
 
-  late final List<Widget> _pages;
+  late List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
+    _pages = [
+      const HomeScreen(),
+      const ExpenseListScreen(),
+      const ProfileScreen(),
+    ];
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final user = ModalRoute.of(context)!.settings.arguments as User?;
-    if (user != null) {
-      _currentUser = user;
+    final user = ModalRoute.of(context)?.settings.arguments as User?;
+    if (user != null && user != _currentUser) {
+      setState(() {
+        _currentUser = user;
+        _pages[2] = ProfileScreen(user: _currentUser);
+      });
     }
-    _pages = [
-      const HomeScreen(),
-      const ExpenseListScreen(),
-      ProfileScreen(user: _currentUser),
-    ];
   }
 
   void _onNavTap(int index) {
@@ -98,7 +105,6 @@ class _MainScreenState extends State<MainScreen> {
     return Drawer(
       child: Column(
         children: [
-          // 🔹 Header dengan gradient background
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 20),
@@ -132,8 +138,6 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
-
-          // 🔹 Menu utama (scrollable)
           Expanded(
             child: ListView(
               padding: EdgeInsets.zero,
@@ -143,7 +147,7 @@ class _MainScreenState extends State<MainScreen> {
                   leading: const Icon(Icons.person),
                   title: const Text("Profile"),
                   onTap: () {
-                    Navigator.pop(context); // ✅ Tutup drawer
+                    Navigator.pop(context);
                     Navigator.pushNamed(context, '/profile');
                   },
                 ),
@@ -174,8 +178,6 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
-
-          // 🔹 Tombol Logout di bawah sendiri
           const Divider(),
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
@@ -186,7 +188,7 @@ class _MainScreenState extends State<MainScreen> {
                 style: TextStyle(color: Colors.red),
               ),
               onTap: () {
-                Navigator.pop(context); // ✅ Tutup drawer dulu
+                Navigator.pop(context);
                 Navigator.pushReplacementNamed(context, '/login');
               },
             ),
@@ -221,14 +223,18 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       drawer: _buildDrawer(context),
+
+      // 🔹 Halaman aktif sesuai tab
       body: _pages[_selectedIndex],
+
+      // 🔹 FAB aktif → buka AddExpenseScreen
       floatingActionButton: CustomFAB(
         onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Floating Action Button ditekan")),
-          );
+          Navigator.pushNamed(context, '/add_expense');
         },
       ),
+
+      // 🔹 Bottom Nav
       bottomNavigationBar: CustomBottomNav(
         currentIndex: _selectedIndex,
         onTap: _onNavTap,

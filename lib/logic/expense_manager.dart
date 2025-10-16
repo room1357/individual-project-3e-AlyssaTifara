@@ -101,4 +101,9 @@ class ExpenseManager {
   ];
 
   static List<Expense> get expenses => _expenses;
+
+  // ✅ Tambahkan method untuk menambah data baru
+  static void addExpense(Expense expense) {
+    _expenses.insert(0, expense); // masukkan di awal biar tampil paling atas
+  }
 }
