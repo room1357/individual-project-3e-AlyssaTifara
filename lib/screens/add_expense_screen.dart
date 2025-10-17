@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/expense_model.dart';
 import '../logic/expense_manager.dart';
+import '../utils/save_utils.dart'; // ✅ untuk fungsi saveCSV
 
-// 🔹 Model Category
+// 🔹 Model Kategori
 class Category {
   final String id;
   final String name;
@@ -18,7 +19,7 @@ class Category {
   });
 }
 
-// 🔹 Daftar Kategori
+// 🔹 Daftar kategori tetap
 final List<Category> categories = [
   Category(
     id: 'c1',
@@ -62,6 +63,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   DateTime? _selectedDate;
   Category? _selectedCategory;
 
+  /// ===================== SIMPAN DATA =====================
   void _submitExpense() {
     if (_formKey.currentState!.validate()) {
       if (_selectedDate == null || _selectedCategory == null) {
@@ -80,7 +82,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         date: _selectedDate!,
       );
 
-      ExpenseManager.addExpense(newExpense); // ✅ Tambah ke data global
+      ExpenseManager.addExpense(newExpense);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -90,10 +92,37 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         ),
       );
 
-      Navigator.pop(context, true); // ✅ kirim sinyal ke layar sebelumnya untuk refresh
+      Navigator.pop(context, true);
     }
   }
 
+  /// ===================== EXPORT CSV =====================
+  Future<void> _exportSingleToCSV() async {
+    if (_titleController.text.isEmpty ||
+        _amountController.text.isEmpty ||
+        _selectedCategory == null ||
+        _selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Isi semua field sebelum export!')),
+      );
+      return;
+    }
+
+    final csv = 'Judul,Kategori,Tanggal,Jumlah (Rp),Deskripsi\n'
+        '${_titleController.text},'
+        '${_selectedCategory!.name},'
+        '${DateFormat('dd-MM-yyyy').format(_selectedDate!)},'
+        '${_amountController.text},'
+        '${_descController.text.isEmpty ? '-' : _descController.text}';
+
+    await saveCSV(csv, 'pengeluaran_baru.csv');
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('✅ Data berhasil diexport ke CSV')),
+    );
+  }
+
+  /// ===================== PICK DATE =====================
   void _pickDate() async {
     final now = DateTime.now();
     final picked = await showDatePicker(
@@ -201,21 +230,48 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: _submitExpense,
-                icon: const Icon(Icons.save),
-                label: const Text(
-                  'Simpan Pengeluaran',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2193b0),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+
+              /// ===================== BUTTONS =====================
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _submitExpense,
+                      icon: const Icon(Icons.save),
+                      label: const Text(
+                        'Simpan',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2193b0),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _exportSingleToCSV,
+                      icon: const Icon(Icons.file_download),
+                      label: const Text(
+                        'Export CSV',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

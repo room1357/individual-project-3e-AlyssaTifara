@@ -10,20 +10,32 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   flutter_localizations:
     sdk: flutter
+
   cupertino_icons: ^1.0.6
-  intl: 0.20.2
+  intl: ^0.20.2
   uuid: ^4.5.1
 
-  fl_chart: ^0.66.0      
-  csv: ^6.0.0            
-  pdf: ^3.10.7           
-  path_provider: ^2.1.2  
+  # Grafik dan visualisasi data
+  fl_chart: ^0.66.0
+
+  # CSV converter
+  csv: ^6.0.0
+
+  # PDF generator dan penyimpanan file
+  pdf: ^3.11.0
+  printing: ^5.13.1   # <== tambah ini biar bisa preview/print/export PDF
+  path_provider: ^2.1.2
+
+  # Share file (opsional untuk bagikan CSV/PDF)
+  share_plus: ^10.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
   flutter_lints: ^5.0.0
 
 flutter:

@@ -1,5 +1,10 @@
+import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pemrograman_mobile/screens/export_screen.dart';
+import 'package:pemrograman_mobile/utils/download_pdf.dart';
+import 'package:pemrograman_mobile/utils/save_utils.dart';
+
 import '../logic/expense_manager.dart';
 import '../models/expense_model.dart';
 import 'edit_expense_screen.dart';
@@ -179,6 +184,69 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     );
   }
 
+  // =================== EXPORT CSV ===================
+  Future<void> _exportToCSV(BuildContext context) async {
+    try {
+      final allExpenses = ExpenseManager.expenses;
+
+      if (allExpenses.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Tidak ada data untuk diexport.')),
+        );
+        return;
+      }
+
+      final rows = [
+        ['Judul', 'Kategori', 'Tanggal', 'Jumlah (Rp)', 'Deskripsi'],
+        ...allExpenses.map((e) => [
+              e.title,
+              e.category,
+              DateFormat('dd-MM-yyyy').format(e.date),
+              e.amount,
+              e.description,
+            ]),
+      ];
+
+      final csvData = const ListToCsvConverter().convert(rows);
+      final csvWithBom = '\uFEFF$csvData';
+      final dateStr = DateFormat('ddMMyyyy_HHmm').format(DateTime.now());
+
+      await saveCSV(csvWithBom, 'semua_pengeluaran_$dateStr.csv');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('✅ Data berhasil diexport ke CSV')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal export CSV: $e')),
+      );
+    }
+  }
+
+  // =================== EXPORT PDF ===================
+  Future<void> _exportToPDF(BuildContext context) async {
+    try {
+      final allExpenses = ExpenseManager.expenses;
+
+      if (allExpenses.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Tidak ada data untuk diexport.')),
+        );
+        return;
+      }
+
+      await DownloadPDF.generateExpenseReport(allExpenses);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('✅ Data berhasil diexport ke PDF')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal export PDF: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final categories = ['Semua', ..._allExpenses.map((e) => e.category).toSet()];
@@ -189,6 +257,18 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             ? 'Semua Pengeluaran'
             : 'Kategori: $_selectedCategory'),
         backgroundColor: Colors.blue,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.file_upload),
+            onPressed: () => _exportToCSV(context),
+            tooltip: 'Export to CSV',
+          ),
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf),
+            onPressed: () => _exportToPDF(context),
+            tooltip: 'Export to PDF',
+          ),
+        ],
       ),
       body: Column(
         children: [

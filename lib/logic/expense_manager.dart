@@ -92,18 +92,30 @@ class ExpenseManager {
     ),
     Expense(
       id: 'e12',
-      title: "Liptint BnB",
-      category: "Produk Bernilai Tinggi",
-      amount: 55000,
-      description: "Liptint merk BnB shade natural",
+      title: "Shampoo Bayi",
+      category: "Produk Kebersihan",
+      amount: 25000,
+      description: "shampoo khusus bayi 200ml",
       date: DateTime.now(),
     ),
   ];
 
-  static List<Expense> get expenses => _expenses;
+  // static List<Expense> get expenses => _expenses;
 
-  // ✅ Tambahkan method untuk menambah data baru
-  static void addExpense(Expense expense) {
-    _expenses.insert(0, expense); // masukkan di awal biar tampil paling atas
-  }
+  // // ✅ Tambahkan method untuk menambah data baru
+  // static void addExpense(Expense expense) {
+  //   _expenses.insert(0, expense); // masukkan di awal biar tampil paling atas
+  // }
+
+  // getter
+static List<Expense> get expenses => _expenses;
+
+
+// optional helper
+static List<Expense> getExpenses() => _expenses;
+
+
+static void addExpense(Expense expense) {
+_expenses.insert(0, expense);
+}
 }
