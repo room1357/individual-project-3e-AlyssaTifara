@@ -10,10 +10,13 @@ class MessagesScreen extends StatefulWidget {
 }
 
 class _MessagesScreenState extends State<MessagesScreen> {
-  /// Format angka ke Rupiah
+  static const Color maroonDark = Color(0xFF4B1C1A);
+  static const Color maroonLight = Color(0xFF6E2E2A);
+  static const Color bone = Color(0xFFE1D9CC);
+
   String formatCurrency(int amount) {
     return "Rp ${amount.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      RegExp(r'(\\d{1,3})(?=(\\d{3})+(?!\\d))'),
       (match) => "${match[1]}.",
     )}";
   }
@@ -21,19 +24,18 @@ class _MessagesScreenState extends State<MessagesScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Expense> checkoutItems = CheckoutManager.checkoutItems;
-
-    // Hitung total belanja
     final double totalHarga =
         checkoutItems.fold(0.0, (sum, item) => sum + item.amount);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Keranjang Checkout"),
-        backgroundColor: Colors.blue,
+        backgroundColor: maroonDark,
+        foregroundColor: bone,
         actions: [
           if (checkoutItems.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.delete),
+              icon: const Icon(Icons.delete, color: bone),
               onPressed: () {
                 setState(() {
                   CheckoutManager.clearCheckout();
@@ -47,14 +49,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
       ),
       body: Column(
         children: [
-          // Bagian total harga di atas
           if (checkoutItems.isNotEmpty)
             Card(
-              color: Colors.blue.shade50,
+              color: maroonLight.withOpacity(0.1),
               margin: const EdgeInsets.all(12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: const BorderSide(color: Colors.blue, width: 1),
+                side: const BorderSide(color: maroonLight, width: 1),
               ),
               child: Padding(
                 padding:
@@ -67,7 +68,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
-                        color: Colors.black87,
+                        color: maroonDark,
                       ),
                     ),
                     Text(
@@ -82,35 +83,44 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 ),
               ),
             ),
-
-          // Daftar barang di bawah total harga
           Expanded(
             child: checkoutItems.isEmpty
                 ? const Center(
-                    child: Text("Belum ada barang di checkout"),
+                    child: Text(
+                      "Belum ada barang di checkout",
+                      style: TextStyle(color: Colors.black54),
+                    ),
                   )
                 : ListView.builder(
                     itemCount: checkoutItems.length,
                     itemBuilder: (context, index) {
                       final item = checkoutItems[index];
                       return Card(
+                        color: bone,
                         margin: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: const BorderSide(color: maroonLight, width: 1),
+                        ),
                         child: ListTile(
-                          leading: const Icon(Icons.shopping_bag,
-                              color: Colors.blue),
+                          leading:
+                              const Icon(Icons.shopping_bag, color: maroonDark),
                           title: Text(
                             item.title,
                             style: const TextStyle(
-                                fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.bold,
+                              color: maroonDark,
+                            ),
                           ),
                           subtitle: Text(item.description),
                           trailing: Text(
                             formatCurrency(item.amount.toInt()),
                             style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
-                                fontSize: 16),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       );

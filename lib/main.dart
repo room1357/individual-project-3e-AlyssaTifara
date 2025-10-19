@@ -9,7 +9,7 @@ import 'screens/homescreen/settings_screen.dart';
 import 'screens/homescreen/about_screen.dart';
 import 'screens/expense_list_screen.dart';
 import 'screens/message_screen.dart';
-import 'screens/add_expense_screen.dart'; // ✅ tambahkan ini
+import 'screens/add_expense_screen.dart';
 import 'widgets/custom_bottom_nav.dart';
 import 'widgets/custom_fab.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -26,13 +26,42 @@ class MyApp extends StatelessWidget {
 
   MyApp({super.key});
 
+  // 🎨 Warna tema global
+  static const Color maroonDark = Color(0xFF4B1C1A); // deep maroon elegan
+  static const Color maroonLight = Color(0xFF6E2E2A); // maroon hangat
+  static const Color bone = Color(0xFFE1D9CC); // krem lembut
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Checkout App',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        // Set primary colors so widgets like FloatingActionButton, etc. inherit nicely
+        primaryColor: maroonDark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: maroonDark,
+          primary: maroonDark,
+          secondary: maroonLight,
+          surface: bone,
+        ),
+        scaffoldBackgroundColor: bone,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: maroonDark,
+          foregroundColor: bone,
+          elevation: 4,
+          centerTitle: true,
+          iconTheme: IconThemeData(color: Colors.white), // hamburger icon white
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: maroonLight,
+        ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
+          selectedItemColor: maroonDark,
+          unselectedItemColor: Colors.grey.shade600,
+          type: BottomNavigationBarType.fixed,
+        ),
         useMaterial3: true,
       ),
       localizationsDelegates: const [
@@ -52,8 +81,6 @@ class MyApp extends StatelessWidget {
         '/settings': (context) => const SettingsScreen(),
         '/about': (context) => const AboutScreen(),
         '/messages': (context) => const MessagesScreen(),
-
-        // ✅ route baru buat floating action button
         '/add_expense': (context) => const AddExpenseScreen(),
       },
     );
@@ -72,6 +99,11 @@ class _MainScreenState extends State<MainScreen> {
   User? _currentUser;
 
   late List<Widget> _pages;
+
+  // 🎨 Tema warna (lokal)
+  static const Color maroonDark = Color(0xFF4B1C1A);
+  static const Color maroonLight = Color(0xFF6E2E2A);
+  static const Color bone = Color(0xFFE1D9CC);
 
   @override
   void initState() {
@@ -105,12 +137,13 @@ class _MainScreenState extends State<MainScreen> {
     return Drawer(
       child: Column(
         children: [
+          // 🔹 Header Drawer
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF2193b0), Color(0xFF6dd5ed)],
+                colors: [maroonDark, maroonLight],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -128,7 +161,7 @@ class _MainScreenState extends State<MainScreen> {
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    color: Colors.white,
+                    color: bone,
                   ),
                 ),
                 Text(
@@ -138,21 +171,31 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
+
+          // 🔹 Menu items (dengan onTap supaya bisa diklik)
           Expanded(
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                const Divider(),
+                const Divider(height: 1),
                 ListTile(
-                  leading: const Icon(Icons.person),
-                  title: const Text("Profile"),
+                  leading: const Icon(Icons.home, color: maroonDark),
+                  title: const Text("Home"),
                   onTap: () {
                     Navigator.pop(context);
+                    setState(() => _selectedIndex = 0);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.person, color: maroonDark),
+                  title: const Text("Profile"),
+                  onTap: () {
+                    Navigator.pop(context); // tutup drawer
                     Navigator.pushNamed(context, '/profile');
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.message),
+                  leading: const Icon(Icons.message, color: maroonDark),
                   title: const Text("Messages"),
                   onTap: () {
                     Navigator.pop(context);
@@ -160,7 +203,7 @@ class _MainScreenState extends State<MainScreen> {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.info),
+                  leading: const Icon(Icons.info, color: maroonDark),
                   title: const Text("About"),
                   onTap: () {
                     Navigator.pop(context);
@@ -168,7 +211,7 @@ class _MainScreenState extends State<MainScreen> {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.settings),
+                  leading: const Icon(Icons.settings, color: maroonDark),
                   title: const Text("Settings"),
                   onTap: () {
                     Navigator.pop(context);
@@ -178,7 +221,8 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
-          const Divider(),
+
+          const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: ListTile(
@@ -201,40 +245,34 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // AppBar sudah di-theme global; kita atur judul & warna teks di sini juga
       appBar: AppBar(
+        backgroundColor: maroonDark,
         title: const Text(
           "Checkout App",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,
-            color: Colors.white,
+            color: bone,
           ),
         ),
         centerTitle: true,
-        elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF2193b0), Color(0xFF6dd5ed)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+        elevation: 4,
+        // iconTheme putih sudah di ThemeData.appBarTheme, jadi hamburger akan putih
       ),
       drawer: _buildDrawer(context),
 
-      // 🔹 Halaman aktif sesuai tab
+      // Halaman aktif sesuai tab
       body: _pages[_selectedIndex],
 
-      // 🔹 FAB aktif → buka AddExpenseScreen
+      // Tombol tambah (FAB)
       floatingActionButton: CustomFAB(
         onPressed: () {
           Navigator.pushNamed(context, '/add_expense');
         },
       ),
 
-      // 🔹 Bottom Nav
+      // Bottom Navigation Bar
       bottomNavigationBar: CustomBottomNav(
         currentIndex: _selectedIndex,
         onTap: _onNavTap,

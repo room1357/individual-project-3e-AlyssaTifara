@@ -14,10 +14,11 @@ class DownloadPDF {
     final dateStr = DateFormat('ddMMyyyy_HHmm').format(dateNow);
     final dateHeader = DateFormat('dd MMMM yyyy, HH:mm', 'id_ID').format(dateNow);
 
-    // Warna tema korporat
-    const primaryColor = PdfColor.fromInt(0xFF1E88E5); // biru elegan
-    const secondaryColor = PdfColor.fromInt(0xFF1565C0);
-    const textColor = PdfColors.black;
+    // 🎨 Warna tema senada aplikasi
+    const maroon = PdfColor.fromInt(0xFF800000);
+    const maroonLight = PdfColor.fromInt(0xFF9B2D30);
+    const bone = PdfColor.fromInt(0xFFE1D9CC);
+    const charcoal = PdfColor.fromInt(0xFF434D59);
 
     pdf.addPage(
       pw.MultiPage(
@@ -29,11 +30,11 @@ class DownloadPDF {
               alignment: pw.Alignment.bottomRight,
               margin: const pw.EdgeInsets.only(right: 20, bottom: 40),
               child: pw.Opacity(
-                opacity: 0.07,
+                opacity: 0.06,
                 child: pw.Text(
-                  'CONFIDENTIAL',
+                  'Checkout App',
                   style: pw.TextStyle(
-                    fontSize: 70,
+                    fontSize: 60,
                     fontWeight: pw.FontWeight.bold,
                     color: PdfColors.grey600,
                   ),
@@ -46,11 +47,12 @@ class DownloadPDF {
           // ===== HEADER =====
           pw.Container(
             padding: const pw.EdgeInsets.only(bottom: 16),
-            decoration: const pw.BoxDecoration(
-              border: pw.Border(bottom: pw.BorderSide(color: PdfColors.grey400)),
+            decoration: pw.BoxDecoration(
+              border: pw.Border(bottom: pw.BorderSide(color: maroonLight, width: 2)),
             ),
             child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
                 pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -58,7 +60,7 @@ class DownloadPDF {
                     pw.Text(
                       'Checkout App',
                       style: pw.TextStyle(
-                        color: primaryColor,
+                        color: maroon,
                         fontSize: 22,
                         fontWeight: pw.FontWeight.bold,
                       ),
@@ -66,8 +68,9 @@ class DownloadPDF {
                     pw.Text(
                       'Laporan Semua Pengeluaran',
                       style: pw.TextStyle(
-                        color: textColor,
-                        fontSize: 14,
+                        color: charcoal,
+                        fontSize: 13,
+                        fontWeight: pw.FontWeight.normal,
                       ),
                     ),
                   ],
@@ -83,9 +86,9 @@ class DownloadPDF {
             ),
           ),
 
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 25),
 
-          // ===== TABEL DATA =====
+          // ===== TABEL =====
           pw.Table.fromTextArray(
             headers: [
               'Judul',
@@ -108,22 +111,24 @@ class DownloadPDF {
               ];
             }).toList(),
             headerDecoration: const pw.BoxDecoration(
-              color: secondaryColor,
+              gradient: pw.LinearGradient(
+                colors: [maroon, maroonLight],
+              ),
             ),
             headerStyle: pw.TextStyle(
               color: PdfColors.white,
               fontWeight: pw.FontWeight.bold,
               fontSize: 10,
             ),
-            cellStyle: const pw.TextStyle(
+            cellStyle: pw.TextStyle(
               fontSize: 9,
-              color: PdfColors.black,
-            ),
-            border: pw.TableBorder.symmetric(
-              inside: const pw.BorderSide(color: PdfColors.grey300),
-              outside: const pw.BorderSide(color: PdfColors.grey400),
+              color: charcoal,
             ),
             cellAlignment: pw.Alignment.centerLeft,
+            border: pw.TableBorder.symmetric(
+              inside: const pw.BorderSide(color: PdfColors.grey300),
+              outside: pw.BorderSide(color: maroonLight, width: 1),
+            ),
             cellHeight: 22,
             columnWidths: {
               0: const pw.FlexColumnWidth(2),
@@ -134,16 +139,16 @@ class DownloadPDF {
             },
           ),
 
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 25),
 
           // ===== TOTAL =====
           pw.Container(
             alignment: pw.Alignment.centerRight,
             child: pw.Container(
-              padding: const pw.EdgeInsets.all(10),
+              padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: pw.BoxDecoration(
-                color: primaryColor,
-                borderRadius: pw.BorderRadius.circular(8),
+                color: maroon,
+                borderRadius: pw.BorderRadius.circular(6),
               ),
               child: pw.Text(
                 'Total Pengeluaran: ${NumberFormat.currency(
@@ -152,8 +157,8 @@ class DownloadPDF {
                   decimalDigits: 0,
                 ).format(total)}',
                 style: pw.TextStyle(
-                  color: PdfColors.white,
-                  fontSize: 13,
+                  color: bone,
+                  fontSize: 12,
                   fontWeight: pw.FontWeight.bold,
                 ),
               ),
@@ -179,6 +184,6 @@ class DownloadPDF {
 
     final bytes = await pdf.save();
     await savePDF(Uint8List.fromList(bytes), 'pengeluaran_$dateStr.pdf');
-    print('✅ PDF laporan pengeluaran berhasil dibuat');
+    print('✅ PDF laporan pengeluaran dengan tema maroon berhasil dibuat');
   }
 }

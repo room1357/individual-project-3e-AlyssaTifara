@@ -1,10 +1,8 @@
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pemrograman_mobile/screens/export_screen.dart';
 import 'package:pemrograman_mobile/utils/download_pdf.dart';
 import 'package:pemrograman_mobile/utils/save_utils.dart';
-
 import '../logic/expense_manager.dart';
 import '../models/expense_model.dart';
 import 'edit_expense_screen.dart';
@@ -23,6 +21,10 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   List<Expense> _filteredExpenses = [];
   String _selectedCategory = 'Semua';
   final TextEditingController _searchController = TextEditingController();
+
+  // 🎨 Warna tema
+  static const Color charcoal = Color(0xFF434D59);
+  static const Color bone = Color(0xFFE1D9CC);
 
   @override
   void initState() {
@@ -95,6 +97,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   void _showExpenseDetails(BuildContext context, Expense expense) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: bone,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -113,7 +116,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                 style: TextStyle(
                     fontSize: 20, color: Colors.red[700], fontWeight: FontWeight.w500),
               ),
-              const Divider(height: 24),
+              const Divider(height: 24, color: Color(0xFF434D59)),
               Text(expense.description,
                   style: const TextStyle(fontSize: 16, color: Colors.black87)),
               const SizedBox(height: 16),
@@ -135,12 +138,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                 icon: const Icon(Icons.edit),
                 label: const Text('Edit Pengeluaran'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+                  backgroundColor: charcoal,
+                  foregroundColor: bone,
                   minimumSize: const Size(double.infinity, 48),
                 ),
                 onPressed: () async {
-                  Navigator.pop(context); // Tutup modal sebelum navigasi ke edit
+                  Navigator.pop(context);
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -165,7 +168,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                 icon: const Icon(Icons.delete),
                 label: const Text('Hapus Pengeluaran'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: Colors.red[700],
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 48),
                 ),
@@ -252,23 +255,34 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     final categories = ['Semua', ..._allExpenses.map((e) => e.category).toSet()];
 
     return Scaffold(
+      backgroundColor: bone,
       appBar: AppBar(
-        title: Text(_selectedCategory == 'Semua'
-            ? 'Semua Pengeluaran'
-            : 'Kategori: $_selectedCategory'),
-        backgroundColor: Colors.blue,
+        backgroundColor: charcoal,
+        centerTitle: true,
+        title: Text(
+          _selectedCategory == 'Semua'
+              ? 'Semua Pengeluaran'
+              : 'Kategori: $_selectedCategory',
+          style: const TextStyle(
+            color: bone,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.file_upload),
+            icon: const Icon(Icons.file_upload, color: bone),
             onPressed: () => _exportToCSV(context),
             tooltip: 'Export to CSV',
           ),
           IconButton(
-            icon: const Icon(Icons.picture_as_pdf),
+            icon: const Icon(Icons.picture_as_pdf, color: bone),
             onPressed: () => _exportToPDF(context),
             tooltip: 'Export to PDF',
           ),
         ],
+        elevation: 4,
+        shadowColor: Colors.black26,
       ),
       body: Column(
         children: [
@@ -277,6 +291,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
                 hintText: 'Cari pengeluaran...',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
@@ -292,12 +308,27 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: categories.map((category) {
+                final isSelected = _selectedCategory == category;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: FilterChip(
-                    label: Text(category),
-                    selected: _selectedCategory == category,
-                    selectedColor: Colors.blue.withOpacity(0.3),
+                    label: Text(
+                      category,
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : charcoal,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      ),
+                    ),
+                    selected: isSelected,
+                    backgroundColor: Colors.white,
+                    selectedColor: charcoal,
+                    shape: StadiumBorder(
+                      side: BorderSide(
+                        color: isSelected ? charcoal : charcoal.withOpacity(0.5),
+                        width: 1.5,
+                      ),
+                    ),
+                    checkmarkColor: Colors.white,
                     onSelected: (selected) {
                       setState(() {
                         _selectedCategory = category;
@@ -317,6 +348,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                       children: [
                         for (var expense in _filteredExpenses)
                           Card(
+                            color: Colors.white,
                             margin:
                                 const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                             child: ListTile(

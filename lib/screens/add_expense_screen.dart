@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/expense_model.dart';
 import '../logic/expense_manager.dart';
-import '../utils/save_utils.dart'; // ✅ untuk fungsi saveCSV
+
+// 🎨 Warna tema global senada
+const Color charcoal = Color(0xFF434D59); // abu elegan
+const Color bone = Color(0xFFE1D9CC); // krem lembut
+const Color maroon = Color(0xFF4B1C1A); // maroon tua elegan
+const Color maroonLight = Color(0xFF6E2E2A); // maroon hangat
 
 // 🔹 Model Kategori
 class Category {
@@ -25,7 +30,7 @@ final List<Category> categories = [
     id: 'c1',
     name: 'Kebutuhan Pokok',
     icon: Icons.shopping_basket,
-    color: Colors.green,
+    color: maroonLight,
   ),
   Category(
     id: 'c2',
@@ -37,13 +42,13 @@ final List<Category> categories = [
     id: 'c3',
     name: 'Produk Kebersihan',
     icon: Icons.cleaning_services,
-    color: Colors.purple,
+    color: charcoal,
   ),
   Category(
     id: 'c4',
     name: 'Produk Bernilai Tinggi',
     icon: Icons.star,
-    color: Colors.red,
+    color: maroon,
   ),
 ];
 
@@ -86,40 +91,16 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          backgroundColor: maroonLight,
           content: Text(
             '✅ Pengeluaran "${_titleController.text}" berhasil disimpan!',
+            style: const TextStyle(color: bone),
           ),
         ),
       );
 
       Navigator.pop(context, true);
     }
-  }
-
-  /// ===================== EXPORT CSV =====================
-  Future<void> _exportSingleToCSV() async {
-    if (_titleController.text.isEmpty ||
-        _amountController.text.isEmpty ||
-        _selectedCategory == null ||
-        _selectedDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Isi semua field sebelum export!')),
-      );
-      return;
-    }
-
-    final csv = 'Judul,Kategori,Tanggal,Jumlah (Rp),Deskripsi\n'
-        '${_titleController.text},'
-        '${_selectedCategory!.name},'
-        '${DateFormat('dd-MM-yyyy').format(_selectedDate!)},'
-        '${_amountController.text},'
-        '${_descController.text.isEmpty ? '-' : _descController.text}';
-
-    await saveCSV(csv, 'pengeluaran_baru.csv');
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('✅ Data berhasil diexport ke CSV')),
-    );
   }
 
   /// ===================== PICK DATE =====================
@@ -131,6 +112,18 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       firstDate: DateTime(now.year - 1),
       lastDate: DateTime(now.year + 1),
       locale: const Locale('id', 'ID'),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: maroonLight,
+              onPrimary: bone,
+              onSurface: charcoal,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) setState(() => _selectedDate = picked);
   }
@@ -138,13 +131,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bone,
       appBar: AppBar(
         title: const Text(
           'Tambah Pengeluaran',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: bone, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF2193b0),
+        backgroundColor: maroon,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: bone),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -156,7 +151,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 controller: _titleController,
                 decoration: const InputDecoration(
                   labelText: 'Judul Pengeluaran',
-                  prefixIcon: Icon(Icons.description),
+                  prefixIcon: Icon(Icons.description, color: maroonLight),
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) =>
@@ -168,7 +163,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: 'Jumlah (Rp)',
-                  prefixIcon: Icon(Icons.attach_money),
+                  prefixIcon: Icon(Icons.attach_money, color: maroonLight),
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
@@ -183,7 +178,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               DropdownButtonFormField<Category>(
                 decoration: const InputDecoration(
                   labelText: 'Kategori',
-                  prefixIcon: Icon(Icons.category),
+                  prefixIcon: Icon(Icons.category, color: maroonLight),
                   border: OutlineInputBorder(),
                 ),
                 value: _selectedCategory,
@@ -200,8 +195,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         ))
                     .toList(),
                 onChanged: (value) => setState(() => _selectedCategory = value),
-                validator: (value) =>
-                    value == null ? 'Pilih kategori' : null,
+                validator: (value) => value == null ? 'Pilih kategori' : null,
               ),
               const SizedBox(height: 16),
               InkWell(
@@ -209,7 +203,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 child: InputDecorator(
                   decoration: const InputDecoration(
                     labelText: 'Tanggal',
-                    prefixIcon: Icon(Icons.calendar_today),
+                    prefixIcon: Icon(Icons.calendar_today, color: maroonLight),
                     border: OutlineInputBorder(),
                   ),
                   child: Text(
@@ -225,53 +219,28 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 controller: _descController,
                 decoration: const InputDecoration(
                   labelText: 'Deskripsi (Opsional)',
-                  prefixIcon: Icon(Icons.text_snippet),
+                  prefixIcon: Icon(Icons.text_snippet, color: maroonLight),
                   border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 24),
 
-              /// ===================== BUTTONS =====================
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: _submitExpense,
-                      icon: const Icon(Icons.save),
-                      label: const Text(
-                        'Simpan',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2193b0),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
+              /// ===================== BUTTON SIMPAN =====================
+              ElevatedButton.icon(
+                onPressed: _submitExpense,
+                icon: const Icon(Icons.save, color: bone),
+                label: const Text(
+                  'Simpan',
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: bone),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: maroonLight,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: _exportSingleToCSV,
-                      icon: const Icon(Icons.file_download),
-                      label: const Text(
-                        'Export CSV',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),

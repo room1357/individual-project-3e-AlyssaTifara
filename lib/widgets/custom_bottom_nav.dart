@@ -10,27 +10,46 @@ class CustomBottomNav extends StatelessWidget {
     required this.onTap,
   });
 
+  static const Color charcoal = Color(0xFF434D59);
+  static const Color bone = Color(0xFFE1D9CC);
+  static const Color accent = Color(0xFF8C2F39);
+
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
-      onTap: onTap,
-      selectedItemColor: Colors.blue,
-      unselectedItemColor: Colors.grey,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: "Home",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.account_balance_wallet), 
-          label: "Expense",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person), 
-          label: "Profile",
-        ),
-      ],
+    return Container(
+      decoration: const BoxDecoration(
+        color: bone,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            offset: Offset(0, -2),
+            blurRadius: 6,
+          ),
+        ],
+      ),
+      child: BottomNavigationBar(
+        currentIndex: currentIndex,
+        onTap: onTap,
+        backgroundColor: bone,
+        selectedItemColor: accent,
+        unselectedItemColor: charcoal.withOpacity(0.5),
+        type: BottomNavigationBarType.fixed,
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_balance_wallet),
+            label: "Expense",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: "Profile",
+          ),
+        ],
+      ),
     );
   }
 }
