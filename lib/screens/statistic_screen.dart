@@ -15,11 +15,11 @@ class _StatisticScreenState extends State<StatisticScreen> {
   late List<Expense> _expenses;
   late Map<String, double> _byCategory;
 
-  // 🎨 Warna tema elegan
+  // 🎨 Warna tema
   static const Color maroonDark = Color(0xFF4B1C1A);
   static const Color maroonLight = Color(0xFF6E2E2A);
-  static const Color bone = Color(0xFFE1D9CC); // background utama
-  static const Color charcoal = Color(0xFF36454F);
+  static const Color bone = Color(0xFFE1D9CC);
+  static const Color charcoal = Color(0xFF36454F); // warna utama teks elegan
 
   @override
   void initState() {
@@ -91,7 +91,7 @@ class _StatisticScreenState extends State<StatisticScreen> {
         NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
     return Card(
-      color: Colors.white, // 🟢 ubah jadi putih
+      color: Colors.white,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -164,20 +164,30 @@ class _StatisticScreenState extends State<StatisticScreen> {
         NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
     return Scaffold(
-      backgroundColor: bone, // 🟤 tetap beige di luar bubble
-      appBar: AppBar(
-        title: const Text(
-          'Statistik Pengeluaran',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: maroonDark,
-        centerTitle: true,
-      ),
+      backgroundColor: bone,
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 🟤 Header elegan seperti di HomeScreen
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(color: bone),
+              child: const Text(
+                "Statistik Pengeluaran",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: charcoal, // ✅ sudah diganti jadi charcoal
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+
             _buildSummaryCard(),
             const SizedBox(height: 8),
 
@@ -202,7 +212,7 @@ class _StatisticScreenState extends State<StatisticScreen> {
               )
             else
               Card(
-                color: Colors.white, // 🟢 ubah jadi putih
+                color: Colors.white,
                 margin: const EdgeInsets.symmetric(horizontal: 16),
                 elevation: 2,
                 shape: RoundedRectangleBorder(
@@ -274,7 +284,7 @@ class _StatisticScreenState extends State<StatisticScreen> {
             const SizedBox(height: 8),
 
             Card(
-              color: Colors.white, // 🟢 ubah jadi putih
+              color: Colors.white,
               margin: const EdgeInsets.symmetric(horizontal: 16),
               elevation: 2,
               shape: RoundedRectangleBorder(

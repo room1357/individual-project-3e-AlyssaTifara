@@ -6,9 +6,9 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   // 🎨 Warna tema elegan & profesional
-  static const Color midnightGreen = Color(0xFF004953); // hijau gelap, tegas & profesional
-  static const Color bone = Color(0xFFE1D9CC); // warna lembut seperti di Expense
-  static const Color whiteCard = Colors.white; // kartu tetap netral & ringan
+  static const Color charcoal = Color(0xFF36454F); // warna utama baru
+  static const Color bone = Color(0xFFE1D9CC); // lembut
+  static const Color whiteCard = Colors.white; // netral
 
   Widget _buildCategoryCard(BuildContext context, Category category) {
     return Card(
@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        splashColor: midnightGreen.withOpacity(0.2),
+        splashColor: charcoal.withOpacity(0.2),
         highlightColor: bone.withOpacity(0.3),
         onTap: () {
           Navigator.push(
@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF2E2E2E), // teks abu tua netral
+                  color: charcoal, // teks abu tua elegan
                 ),
               ),
             ],
@@ -54,23 +54,21 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bone, // 🟤 ubah background jadi bone
+      backgroundColor: bone,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 🔹 Header elegan (warna sama dengan background)
+          // 🔹 Header
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: bone, // 🟤 ubah agar menyatu dengan background utama
-            ),
+            decoration: const BoxDecoration(color: bone),
             child: const Text(
               "Kategori Pengeluaran",
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: midnightGreen, // teks kontras elegan
+                color: charcoal,
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,

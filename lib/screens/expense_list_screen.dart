@@ -22,8 +22,10 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   String _selectedCategory = 'Semua';
   final TextEditingController _searchController = TextEditingController();
 
-  static const Color midnightGreen = Color(0xFF004953);
+  static const Color charcoal = Color(0xFF36454F);
   static const Color bone = Color(0xFFE1D9CC);
+  static const Color maroonDark = Color(0xFF4B1C1A);
+  static const Color maroonLight = Color(0xFF6E2E2A);
 
   @override
   void initState() {
@@ -137,7 +139,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                 icon: const Icon(Icons.edit),
                 label: const Text('Edit Pengeluaran'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: midnightGreen,
+                  backgroundColor: charcoal,
                   foregroundColor: bone,
                   minimumSize: const Size(double.infinity, 48),
                 ),
@@ -189,28 +191,43 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   Future<void> _exportToCSV(BuildContext context) async {
     try {
       final allExpenses = ExpenseManager.expenses;
-      if (allExpenses.isEmpty) {
+      // pilih data yang akan diexport: jika ada kategori terpilih selain 'Semua', hanya export kategori itu
+      final exportList = _selectedCategory == 'Semua'
+          ? allExpenses
+          : allExpenses.where((e) => e.category == _selectedCategory).toList();
+
+      if (exportList.isEmpty) {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Tidak ada data untuk diexport.')));
         return;
       }
 
-      final rows = [
+      final rows = <List<dynamic>>[];
+      if (_selectedCategory != 'Semua') {
+        // tambahkan baris keterangan kategori di atas header untuk CSV
+        rows.add(['Kategori', _selectedCategory]);
+      }
+      rows.addAll([
         ['Judul', 'Kategori', 'Tanggal', 'Jumlah (Rp)', 'Deskripsi'],
-        ...allExpenses.map((e) => [
+        ...exportList.map((e) => [
               e.title,
               e.category,
               DateFormat('dd-MM-yyyy').format(e.date),
               e.amount,
               e.description,
             ]),
-      ];
+      ]);
 
       final csvData = const ListToCsvConverter().convert(rows);
       final csvWithBom = '\uFEFF$csvData';
       final dateStr = DateFormat('ddMMyyyy_HHmm').format(DateTime.now());
 
-      await saveCSV(csvWithBom, 'semua_pengeluaran_$dateStr.csv');
+      final catSlug = _selectedCategory == 'Semua'
+          ? 'semua'
+          : _selectedCategory.replaceAll(' ', '_').toLowerCase();
+
+      await saveCSV(csvWithBom, 'pengeluaran_${catSlug}_$dateStr.csv');
+
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('✅ Data berhasil diexport ke CSV')));
     } catch (e) {
@@ -222,13 +239,17 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   Future<void> _exportToPDF(BuildContext context) async {
     try {
       final allExpenses = ExpenseManager.expenses;
-      if (allExpenses.isEmpty) {
+      final exportList = _selectedCategory == 'Semua'
+          ? allExpenses
+          : allExpenses.where((e) => e.category == _selectedCategory).toList();
+
+      if (exportList.isEmpty) {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Tidak ada data untuk diexport.')));
         return;
       }
 
-      await DownloadPDF.generateExpenseReport(allExpenses);
+  await DownloadPDF.generateExpenseReport(exportList, category: _selectedCategory == 'Semua' ? null : _selectedCategory);
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('✅ Data berhasil diexport ke PDF')));
     } catch (e) {
@@ -241,8 +262,33 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   Widget build(BuildContext context) {
     final categories = ['Semua', ..._allExpenses.map((e) => e.category).toSet()];
 
+    final bool wasPushed = Navigator.of(context).canPop();
+
     return Scaffold(
       backgroundColor: bone,
+      appBar: (wasPushed && _selectedCategory != 'Semua')
+          ? AppBar(
+              backgroundColor: maroonDark,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                color: bone,
+                onPressed: () => Navigator.pop(context),
+                tooltip: 'Kembali',
+              ),
+              centerTitle: true,
+              title: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  'Kategori: $_selectedCategory',
+                  style: const TextStyle(
+                    color: Color(0xFFE1D9CC),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            )
+          : null,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -258,7 +304,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         ? "Semua Pengeluaran"
                         : "Kategori: $_selectedCategory",
                     style: const TextStyle(
-                      color: midnightGreen,
+                      color: charcoal,
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
@@ -266,12 +312,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.picture_as_pdf, color: midnightGreen),
+                  icon: const Icon(Icons.picture_as_pdf, color: charcoal),
                   onPressed: () => _exportToPDF(context),
                   tooltip: 'Export ke PDF',
                 ),
                 IconButton(
-                  icon: const Icon(Icons.file_upload, color: midnightGreen),
+                  icon: const Icon(Icons.file_upload, color: charcoal),
                   onPressed: () => _exportToCSV(context),
                   tooltip: 'Export ke CSV',
                 ),
@@ -311,18 +357,18 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                     label: Text(
                       category,
                       style: TextStyle(
-                        color: isSelected ? Colors.white : midnightGreen,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.normal,
+                        color: isSelected ? Colors.white : charcoal,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                       ),
                     ),
                     selected: isSelected,
                     backgroundColor: Colors.white,
-                    selectedColor: midnightGreen,
+                    selectedColor: charcoal,
                     shape: StadiumBorder(
                       side: BorderSide(
-                        color:
-                            isSelected ? midnightGreen : midnightGreen.withOpacity(0.5),
+                        color: isSelected
+                            ? charcoal
+                            : charcoal.withOpacity(0.5),
                         width: 1.5,
                       ),
                     ),

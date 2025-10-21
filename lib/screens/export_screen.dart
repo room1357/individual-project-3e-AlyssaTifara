@@ -182,7 +182,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
         return;
       }
 
-      await DownloadPDF.generateExpenseReport(allExpenses);
+  await DownloadPDF.generateExpenseReport(allExpenses, category: null);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('✅ Data berhasil diexport ke PDF')),

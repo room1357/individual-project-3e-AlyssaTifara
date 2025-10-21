@@ -18,19 +18,22 @@ dependencies:
   intl: ^0.20.2
   uuid: ^4.5.1
 
-  # Grafik dan visualisasi data
+  # 🎨 Ikon tambahan (termasuk logo CSV)
+  font_awesome_flutter: ^10.7.0
+
+  # 📊 Grafik dan visualisasi data
   fl_chart: ^0.66.0
   collection: ^1.18.0
 
-  # CSV converter
+  # 🧾 CSV converter
   csv: ^6.0.0
 
-  # PDF generator dan penyimpanan file
+  # 📄 PDF generator & penyimpanan file
   pdf: ^3.11.0
   printing: ^5.13.1   # untuk preview/print/export PDF
   path_provider: ^2.1.2
 
-  # Share file (opsional untuk bagikan CSV/PDF)
+  # 📤 Share file (opsional untuk bagikan CSV/PDF)
   share_plus: ^10.0.2
 
 dev_dependencies:

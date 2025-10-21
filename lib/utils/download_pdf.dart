@@ -7,7 +7,7 @@ import 'save_utils.dart';
 import '../models/expense_model.dart';
 
 class DownloadPDF {
-  static Future<void> generateExpenseReport(List<Expense> expenses) async {
+  static Future<void> generateExpenseReport(List<Expense> expenses, {String? category}) async {
     final pdf = pw.Document();
     final total = expenses.fold(0.0, (sum, e) => sum + e.amount);
     final dateNow = DateTime.now();
@@ -66,7 +66,9 @@ class DownloadPDF {
                       ),
                     ),
                     pw.Text(
-                      'Laporan Semua Pengeluaran',
+                      category == null || category == 'Semua'
+                          ? 'Laporan Semua Pengeluaran'
+                          : 'Laporan Pengeluaran - Kategori: $category',
                       style: pw.TextStyle(
                         color: charcoal,
                         fontSize: 13,
@@ -107,7 +109,7 @@ class DownloadPDF {
                   symbol: 'Rp ',
                   decimalDigits: 0,
                 ).format(e.amount),
-                e.description ?? '-',
+                e.description,
               ];
             }).toList(),
             headerDecoration: const pw.BoxDecoration(
@@ -183,7 +185,10 @@ class DownloadPDF {
     );
 
     final bytes = await pdf.save();
-    await savePDF(Uint8List.fromList(bytes), 'pengeluaran_$dateStr.pdf');
-    print('✅ PDF laporan pengeluaran dengan tema maroon berhasil dibuat');
+  final slug = (category == null || category == 'Semua')
+    ? 'semua'
+    : category.replaceAll(' ', '_').toLowerCase();
+    await savePDF(Uint8List.fromList(bytes), 'pengeluaran_${slug}_$dateStr.pdf');
+    print('✅ PDF laporan pengeluaran (${slug}) berhasil dibuat');
   }
 }
