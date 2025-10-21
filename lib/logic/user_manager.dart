@@ -3,9 +3,9 @@ import 'package:pemrograman_mobile/models/user_model.dart';
 class UserManager {
   final List<User> _users = [
     User(
-      fullName: 'cris',
-      email: 'alyssa.tifara@example.com',
-      username: 'cristin',
+      fullName: 'christhor',
+      email: 'chris@example.com',
+      username: 'christhor',
       password: '1234567890',
     ),
   ];

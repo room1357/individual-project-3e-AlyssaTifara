@@ -22,8 +22,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   String _selectedCategory = 'Semua';
   final TextEditingController _searchController = TextEditingController();
 
-  // 🎨 Warna tema
-  static const Color charcoal = Color(0xFF434D59);
+  static const Color midnightGreen = Color(0xFF004953);
   static const Color bone = Color(0xFFE1D9CC);
 
   @override
@@ -46,21 +45,16 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         bool matchesSearch = _searchController.text.isEmpty ||
             expense.title.toLowerCase().contains(_searchController.text.toLowerCase()) ||
             expense.description.toLowerCase().contains(_searchController.text.toLowerCase());
-
         bool matchesCategory =
             _selectedCategory == 'Semua' || expense.category == _selectedCategory;
-
         return matchesSearch && matchesCategory;
       }).toList();
     });
   }
 
   String _formatCurrency(double amount) {
-    final formatter = NumberFormat.currency(
-      locale: 'id_ID',
-      symbol: 'Rp ',
-      decimalDigits: 0,
-    );
+    final formatter =
+        NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
     return formatter.format(amount);
   }
 
@@ -109,16 +103,20 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(expense.title,
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                  style:
+                      const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text(
                 _formatCurrency(expense.amount.toDouble()),
                 style: TextStyle(
-                    fontSize: 20, color: Colors.red[700], fontWeight: FontWeight.w500),
+                    fontSize: 20,
+                    color: Colors.red[700],
+                    fontWeight: FontWeight.w500),
               ),
               const Divider(height: 24, color: Color(0xFF434D59)),
               Text(expense.description,
-                  style: const TextStyle(fontSize: 16, color: Colors.black87)),
+                  style:
+                      const TextStyle(fontSize: 16, color: Colors.black87)),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -127,7 +125,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   const SizedBox(width: 8),
                   Text(expense.category, style: const TextStyle(fontSize: 16)),
                   const Spacer(),
-                  const Icon(Icons.calendar_today, color: Colors.grey, size: 16),
+                  const Icon(Icons.calendar_today,
+                      color: Colors.grey, size: 16),
                   const SizedBox(width: 8),
                   Text(DateFormat('dd MMM yyyy').format(expense.date),
                       style: const TextStyle(fontSize: 16, color: Colors.grey)),
@@ -138,7 +137,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                 icon: const Icon(Icons.edit),
                 label: const Text('Edit Pengeluaran'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: charcoal,
+                  backgroundColor: midnightGreen,
                   foregroundColor: bone,
                   minimumSize: const Size(double.infinity, 48),
                 ),
@@ -187,15 +186,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     );
   }
 
-  // =================== EXPORT CSV ===================
   Future<void> _exportToCSV(BuildContext context) async {
     try {
       final allExpenses = ExpenseManager.expenses;
-
       if (allExpenses.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tidak ada data untuk diexport.')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Tidak ada data untuk diexport.')));
         return;
       }
 
@@ -215,38 +211,29 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       final dateStr = DateFormat('ddMMyyyy_HHmm').format(DateTime.now());
 
       await saveCSV(csvWithBom, 'semua_pengeluaran_$dateStr.csv');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('✅ Data berhasil diexport ke CSV')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('✅ Data berhasil diexport ke CSV')));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal export CSV: $e')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Gagal export CSV: $e')));
     }
   }
 
-  // =================== EXPORT PDF ===================
   Future<void> _exportToPDF(BuildContext context) async {
     try {
       final allExpenses = ExpenseManager.expenses;
-
       if (allExpenses.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tidak ada data untuk diexport.')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Tidak ada data untuk diexport.')));
         return;
       }
 
       await DownloadPDF.generateExpenseReport(allExpenses);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('✅ Data berhasil diexport ke PDF')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('✅ Data berhasil diexport ke PDF')));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal export PDF: $e')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Gagal export PDF: $e')));
     }
   }
 
@@ -256,38 +243,45 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
     return Scaffold(
       backgroundColor: bone,
-      appBar: AppBar(
-        backgroundColor: charcoal,
-        centerTitle: true,
-        title: Text(
-          _selectedCategory == 'Semua'
-              ? 'Semua Pengeluaran'
-              : 'Kategori: $_selectedCategory',
-          style: const TextStyle(
-            color: bone,
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.file_upload, color: bone),
-            onPressed: () => _exportToCSV(context),
-            tooltip: 'Export to CSV',
-          ),
-          IconButton(
-            icon: const Icon(Icons.picture_as_pdf, color: bone),
-            onPressed: () => _exportToPDF(context),
-            tooltip: 'Export to PDF',
-          ),
-        ],
-        elevation: 4,
-        shadowColor: Colors.black26,
-      ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 🔹 Header sejajar dengan ikon export
+          Container(
+            color: bone,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _selectedCategory == 'Semua'
+                        ? "Semua Pengeluaran"
+                        : "Kategori: $_selectedCategory",
+                    style: const TextStyle(
+                      color: midnightGreen,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.picture_as_pdf, color: midnightGreen),
+                  onPressed: () => _exportToPDF(context),
+                  tooltip: 'Export ke PDF',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.file_upload, color: midnightGreen),
+                  onPressed: () => _exportToCSV(context),
+                  tooltip: 'Export ke CSV',
+                ),
+              ],
+            ),
+          ),
+
+          // 🔹 Search bar
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
@@ -302,6 +296,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               onChanged: (value) => _filterExpenses(),
             ),
           ),
+
+          // 🔹 Filter kategori
           SizedBox(
             height: 50,
             child: ListView(
@@ -315,16 +311,18 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                     label: Text(
                       category,
                       style: TextStyle(
-                        color: isSelected ? Colors.white : charcoal,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        color: isSelected ? Colors.white : midnightGreen,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.normal,
                       ),
                     ),
                     selected: isSelected,
                     backgroundColor: Colors.white,
-                    selectedColor: charcoal,
+                    selectedColor: midnightGreen,
                     shape: StadiumBorder(
                       side: BorderSide(
-                        color: isSelected ? charcoal : charcoal.withOpacity(0.5),
+                        color:
+                            isSelected ? midnightGreen : midnightGreen.withOpacity(0.5),
                         width: 1.5,
                       ),
                     ),
@@ -340,42 +338,42 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               }).toList(),
             ),
           ),
+
+          // 🔹 Daftar pengeluaran
           Expanded(
             child: _filteredExpenses.isEmpty
                 ? const Center(child: Text('Tidak ada pengeluaran ditemukan'))
                 : SingleChildScrollView(
                     child: Column(
-                      children: [
-                        for (var expense in _filteredExpenses)
-                          Card(
-                            color: Colors.white,
-                            margin:
-                                const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: _getCategoryColor(expense.category),
-                                child: Icon(
-                                  _getCategoryIcon(expense.category),
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
+                      children: _filteredExpenses.map((expense) {
+                        return Card(
+                          color: Colors.white,
+                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: _getCategoryColor(expense.category),
+                              child: Icon(
+                                _getCategoryIcon(expense.category),
+                                color: Colors.white,
+                                size: 20,
                               ),
-                              title: Text(expense.title,
-                                  style: const TextStyle(fontWeight: FontWeight.w600)),
-                              subtitle: Text(
-                                '${expense.category} • ${DateFormat('dd MMM yyyy').format(expense.date)}',
-                              ),
-                              trailing: Text(
-                                _formatCurrency(expense.amount.toDouble()),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red[700],
-                                ),
-                              ),
-                              onTap: () => _showExpenseDetails(context, expense),
                             ),
+                            title: Text(expense.title,
+                                style: const TextStyle(fontWeight: FontWeight.w600)),
+                            subtitle: Text(
+                              '${expense.category} • ${DateFormat('dd MMM yyyy').format(expense.date)}',
+                            ),
+                            trailing: Text(
+                              _formatCurrency(expense.amount.toDouble()),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red[700],
+                              ),
+                            ),
+                            onTap: () => _showExpenseDetails(context, expense),
                           ),
-                      ],
+                        );
+                      }).toList(),
                     ),
                   ),
           ),

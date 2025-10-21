@@ -5,20 +5,20 @@ import 'expense_list_screen.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  // 🎨 Warna tema
-  static const Color charcoal = Color(0xFF434D59); // abu elegan
-  static const Color bone = Color(0xFFE1D9CC); // krem lembut
-  static const Color lightCard = Color(0xFFF5F1E9); // abu terang kontras lembut
+  // 🎨 Warna tema elegan & profesional
+  static const Color midnightGreen = Color(0xFF004953); // hijau gelap, tegas & profesional
+  static const Color bone = Color(0xFFE1D9CC); // warna lembut seperti di Expense
+  static const Color whiteCard = Colors.white; // kartu tetap netral & ringan
 
   Widget _buildCategoryCard(BuildContext context, Category category) {
     return Card(
-      color: lightCard, // ✅ warna card kontras lembut
-      elevation: 6,
-      shadowColor: Colors.black26,
+      color: whiteCard,
+      elevation: 5,
+      shadowColor: Colors.black12,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        splashColor: charcoal.withOpacity(0.2),
+        splashColor: midnightGreen.withOpacity(0.2),
         highlightColor: bone.withOpacity(0.3),
         onTap: () {
           Navigator.push(
@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF2E2E2E), // teks abu tua lembut
+                  color: Color(0xFF2E2E2E), // teks abu tua netral
                 ),
               ),
             ],
@@ -53,33 +53,26 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: bone, // background utama lembut
-      child: Column(
+    return Scaffold(
+      backgroundColor: bone, // 🟤 ubah background jadi bone
+      body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 🔹 Header elegan
+          // 🔹 Header elegan (warna sama dengan background)
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            alignment: Alignment.center, // ✅ teks rata tengah
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            alignment: Alignment.center,
             decoration: const BoxDecoration(
-              color: charcoal,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  offset: Offset(0, 3),
-                  blurRadius: 5,
-                ),
-              ],
+              color: bone, // 🟤 ubah agar menyatu dengan background utama
             ),
             child: const Text(
               "Kategori Pengeluaran",
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Color(0xFFE1D9CC), // warna bone
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
+                color: midnightGreen, // teks kontras elegan
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
               ),
             ),
