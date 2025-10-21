@@ -20,13 +20,14 @@ dependencies:
 
   # Grafik dan visualisasi data
   fl_chart: ^0.66.0
+  collection: ^1.18.0
 
   # CSV converter
   csv: ^6.0.0
 
   # PDF generator dan penyimpanan file
   pdf: ^3.11.0
-  printing: ^5.13.1   # <== tambah ini biar bisa preview/print/export PDF
+  printing: ^5.13.1   # untuk preview/print/export PDF
   path_provider: ^2.1.2
 
   # Share file (opsional untuk bagikan CSV/PDF)

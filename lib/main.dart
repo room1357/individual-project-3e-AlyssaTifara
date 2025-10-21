@@ -8,6 +8,7 @@ import 'screens/homescreen/profile_screen.dart';
 import 'screens/homescreen/settings_screen.dart';
 import 'screens/homescreen/about_screen.dart';
 import 'screens/expense_list_screen.dart';
+import 'screens/statistic_screen.dart';
 import 'screens/message_screen.dart';
 import 'screens/add_expense_screen.dart';
 import 'widgets/custom_bottom_nav.dart';
@@ -111,6 +112,7 @@ class _MainScreenState extends State<MainScreen> {
     _pages = [
       const HomeScreen(),
       const ExpenseListScreen(),
+      const StatisticScreen(),
       const ProfileScreen(),
     ];
   }

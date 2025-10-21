@@ -45,6 +45,10 @@ class CustomBottomNav extends StatelessWidget {
             label: "Expense",
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart),
+            label: "Statistik",
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: "Profile",
           ),
