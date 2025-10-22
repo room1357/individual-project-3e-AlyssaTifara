@@ -7,6 +7,8 @@ class Expense {
   final double amount;
   final String description;
   final DateTime date;
+  final List<String> sharedWithUserIds; // IDs of users sharing this expense
+  final Map<String, double> splitAmounts; // User ID -> their share amount
 
   Expense({
     required this.id,
@@ -15,6 +17,8 @@ class Expense {
     required this.amount,
     required this.description,
     required this.date,
+    this.sharedWithUserIds = const [],
+    this.splitAmounts = const {},
   });
 
   String get formattedDate {

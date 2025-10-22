@@ -1,12 +1,26 @@
 import 'package:pemrograman_mobile/models/user_model.dart';
 
 class UserManager {
+  static User? currentUser; // Track the currently logged-in user
+
   final List<User> _users = [
     User(
       fullName: 'christhor',
       email: 'chris@example.com',
       username: 'christhor',
-      password: '1234567890',
+      password: '123',
+    ),
+    User(
+      fullName: 'Oka',
+      email: 'oka@example.com',
+      username: 'oka',
+      password: '123',
+    ),
+    User(
+      fullName: 'Miki',
+      email: 'miki@example.com',
+      username: 'miki',
+      password: '123',
     ),
   ];
 
@@ -23,6 +37,7 @@ class UserManager {
   User? loginUser(String username, String password) {
     for (var user in _users) {
       if (user.username == username && user.password == password) {
+        currentUser = user; // Set current user on successful login
         return user;
       }
     }
@@ -40,5 +55,21 @@ class UserManager {
         break;
       }
     }
+  }
+
+  // Get all users except the current user for sharing expenses
+  List<User> getAllUsersExceptCurrent() {
+    if (currentUser == null) return [];
+    return _users.where((user) => user.id != currentUser!.id).toList();
+  }
+
+  // Get all users (for admin purposes)
+  List<User> getAllUsers() {
+    return _users;
+  }
+
+  // Get user by ID
+  User? getUserById(String id) {
+    return _users.firstWhere((user) => user.id == id);
   }
 }

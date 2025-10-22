@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/expense_model.dart';
+import '../models/user_model.dart';
 import '../logic/expense_manager.dart';
+import '../logic/user_manager.dart';
 
 // 🎨 Warna tema global senada
 const Color charcoal = Color(0xFF434D59); // abu elegan
@@ -68,6 +70,28 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   DateTime? _selectedDate;
   Category? _selectedCategory;
 
+  // Shared expense fields
+  bool _isShared = false;
+  List<User> _availableUsers = [];
+  List<String> _selectedUserIds = [];
+  Map<String, TextEditingController> _splitAmountControllers = {};
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize available users for sharing
+    _availableUsers = UserManager().getAllUsersExceptCurrent();
+  }
+
+  @override
+  void dispose() {
+    // Dispose split amount controllers
+    for (var controller in _splitAmountControllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
   /// ===================== SIMPAN DATA =====================
   void _submitExpense() {
     if (_formKey.currentState!.validate()) {
@@ -78,6 +102,34 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         return;
       }
 
+      // Validate shared expense split amounts
+      if (_isShared && _selectedUserIds.isNotEmpty) {
+        double totalSplit = 0;
+        Map<String, double> splitAmounts = {};
+
+        for (String userId in _selectedUserIds) {
+          if (_splitAmountControllers.containsKey(userId)) {
+            double splitAmount = double.tryParse(_splitAmountControllers[userId]!.text) ?? 0;
+            if (splitAmount <= 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Jumlah split untuk ${_getUserName(userId)} harus lebih dari 0')),
+              );
+              return;
+            }
+            splitAmounts[userId] = splitAmount;
+            totalSplit += splitAmount;
+          }
+        }
+
+        double totalAmount = double.parse(_amountController.text);
+        if ((totalSplit - totalAmount).abs() > 0.01) { // Allow small floating point differences
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Total split amount harus sama dengan jumlah pengeluaran')),
+          );
+          return;
+        }
+      }
+
       final newExpense = Expense(
         id: DateTime.now().toString(),
         title: _titleController.text,
@@ -85,6 +137,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         amount: double.parse(_amountController.text),
         description: _descController.text,
         date: _selectedDate!,
+        sharedWithUserIds: _isShared ? _selectedUserIds : [],
+        splitAmounts: _isShared ? _buildSplitAmountsMap() : {},
       );
 
       ExpenseManager.addExpense(newExpense);
@@ -101,6 +155,22 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
       Navigator.pop(context, true);
     }
+  }
+
+  Map<String, double> _buildSplitAmountsMap() {
+    Map<String, double> splitAmounts = {};
+    for (String userId in _selectedUserIds) {
+      if (_splitAmountControllers.containsKey(userId)) {
+        double amount = double.tryParse(_splitAmountControllers[userId]!.text) ?? 0;
+        splitAmounts[userId] = amount;
+      }
+    }
+    return splitAmounts;
+  }
+
+  String _getUserName(String userId) {
+    User? user = _availableUsers.firstWhere((u) => u.id == userId);
+    return user?.fullName ?? 'Unknown User';
   }
 
   /// ===================== PICK DATE =====================
@@ -223,6 +293,93 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   border: OutlineInputBorder(),
                 ),
               ),
+              const SizedBox(height: 16),
+
+              // Shared Expense Toggle
+              SwitchListTile(
+                title: const Text('Bagikan Pengeluaran'),
+                subtitle: const Text('Bagi pengeluaran dengan pengguna lain'),
+                value: _isShared,
+                onChanged: (value) {
+                  setState(() {
+                    _isShared = value;
+                    if (!value) {
+                      _selectedUserIds.clear();
+                      _splitAmountControllers.clear();
+                    }
+                  });
+                },
+                activeColor: maroonLight,
+              ),
+
+              // User Selection for Shared Expenses
+              if (_isShared) ...[
+                const SizedBox(height: 16),
+                const Text(
+                  'Pilih Pengguna untuk Dibagikan:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  children: _availableUsers.map((user) {
+                    bool isSelected = _selectedUserIds.contains(user.id);
+                    return FilterChip(
+                      label: Text(user.fullName),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          if (selected) {
+                            _selectedUserIds.add(user.id);
+                            _splitAmountControllers[user.id] = TextEditingController();
+                          } else {
+                            _selectedUserIds.remove(user.id);
+                            _splitAmountControllers[user.id]?.dispose();
+                            _splitAmountControllers.remove(user.id);
+                          }
+                        });
+                      },
+                      selectedColor: maroonLight.withOpacity(0.2),
+                      checkmarkColor: maroonLight,
+                    );
+                  }).toList(),
+                ),
+
+                // Split Amount Inputs
+                if (_selectedUserIds.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Jumlah Split per Pengguna:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  ..._selectedUserIds.map((userId) {
+                    User? user = _availableUsers.firstWhere((u) => u.id == userId);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: TextFormField(
+                        controller: _splitAmountControllers[userId],
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Split untuk ${user?.fullName ?? 'Unknown'}',
+                          prefixIcon: const Icon(Icons.account_balance_wallet),
+                          border: const OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Wajib diisi untuk shared expense';
+                          }
+                          if (double.tryParse(value) == null || double.parse(value) <= 0) {
+                            return 'Masukkan angka yang valid dan lebih dari 0';
+                          }
+                          return null;
+                        },
+                      ),
+                    );
+                  }),
+                ],
+              ],
+
               const SizedBox(height: 24),
 
               /// ===================== BUTTON SIMPAN =====================

@@ -1,4 +1,6 @@
 import '../models/expense_model.dart';
+import '../models/user_model.dart';
+import '../logic/user_manager.dart';
 
 class ExpenseManager {
   static final List<Expense> _expenses = [
@@ -146,5 +148,39 @@ class ExpenseManager {
 
   static void addExpense(Expense expense) {
     _expenses.insert(0, expense);
+  }
+
+  // Get expenses for a specific user (including shared expenses)
+  static List<Expense> getUserExpenses(User user) {
+    return _expenses.where((expense) {
+      // Include expenses created by the user
+      if (expense.id.startsWith(user.id) || expense.id.contains(user.id)) {
+        return true;
+      }
+      // Include shared expenses where the user is a participant
+      return expense.sharedWithUserIds.contains(user.id);
+    }).toList();
+  }
+
+  // Get the user's share amount for a shared expense
+  static double getUserShareAmount(Expense expense, User user) {
+    if (expense.splitAmounts.containsKey(user.id)) {
+      return expense.splitAmounts[user.id]!;
+    }
+    // If no specific split, divide equally among all participants (including creator)
+    int totalParticipants = expense.sharedWithUserIds.length + 1; // +1 for creator
+    return expense.amount / totalParticipants;
+  }
+
+  // Check if an expense is shared
+  static bool isSharedExpense(Expense expense) {
+    return expense.sharedWithUserIds.isNotEmpty;
+  }
+
+  // Get all participants for an expense (including creator)
+  static List<String> getExpenseParticipants(Expense expense) {
+    // Assuming creator's ID is somehow stored, for now return shared users
+    // In a real app, you'd store the creator's ID separately
+    return expense.sharedWithUserIds;
   }
 }

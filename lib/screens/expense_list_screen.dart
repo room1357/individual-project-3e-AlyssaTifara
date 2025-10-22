@@ -4,7 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:pemrograman_mobile/utils/download_pdf.dart';
 import 'package:pemrograman_mobile/utils/save_utils.dart';
 import '../logic/expense_manager.dart';
+import '../logic/user_manager.dart';
 import '../models/expense_model.dart';
+import '../models/user_model.dart';
 import 'edit_expense_screen.dart';
 
 class ExpenseListScreen extends StatefulWidget {
@@ -134,6 +136,35 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                       style: const TextStyle(fontSize: 16, color: Colors.grey)),
                 ],
               ),
+
+              // Shared expense details
+              if (expense.sharedWithUserIds.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                const Text(
+                  'Dibagikan dengan:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  children: expense.sharedWithUserIds.map((userId) {
+                    User? user = UserManager().getUserById(userId);
+                    double userShare = expense.splitAmounts[userId] ?? 0;
+                    return Chip(
+                      label: Text(
+                        '${user?.fullName ?? 'Unknown User'}: ${_formatCurrency(userShare)}',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      backgroundColor: Colors.blue.withOpacity(0.1),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Bagian Anda: ${_formatCurrency(expense.splitAmounts[UserManager.currentUser?.id] ?? expense.amount)}',
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+              ],
               const SizedBox(height: 20),
               ElevatedButton.icon(
                 icon: const Icon(Icons.edit),
@@ -397,9 +428,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: _getCategoryColor(expense.category),
+                              backgroundColor: expense.sharedWithUserIds.isNotEmpty
+                                  ? Colors.blue // Shared expense indicator
+                                  : _getCategoryColor(expense.category),
                               child: Icon(
-                                _getCategoryIcon(expense.category),
+                                expense.sharedWithUserIds.isNotEmpty
+                                    ? Icons.group // Group icon for shared expenses
+                                    : _getCategoryIcon(expense.category),
                                 color: Colors.white,
                                 size: 20,
                               ),
@@ -410,7 +445,9 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                               '${expense.category} • ${DateFormat('dd MMM yyyy').format(expense.date)}',
                             ),
                             trailing: Text(
-                              _formatCurrency(expense.amount.toDouble()),
+                              _formatCurrency(expense.sharedWithUserIds.isNotEmpty
+                                  ? (expense.splitAmounts[UserManager.currentUser?.id] ?? expense.amount)
+                                  : expense.amount.toDouble()),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.red[700],
