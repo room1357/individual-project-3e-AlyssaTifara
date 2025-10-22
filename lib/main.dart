@@ -7,6 +7,7 @@ import 'screens/home_screen.dart';
 import 'screens/homescreen/profile_screen.dart';
 import 'screens/homescreen/settings_screen.dart';
 import 'screens/homescreen/about_screen.dart';
+import 'screens/edit_profile_screen.dart';
 import 'screens/expense_list_screen.dart';
 import 'screens/statistic_screen.dart';
 import 'screens/message_screen.dart';
@@ -78,7 +79,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(userManager: _userManager),
         '/register': (context) => RegisterScreen(userManager: _userManager),
         '/home': (context) => const MainScreen(),
-        '/profile': (context) => const ProfileScreen(),
+        '/profile': (context) => ProfileScreen(userManager: _userManager),
         '/settings': (context) => const SettingsScreen(),
         '/about': (context) => const AboutScreen(),
         '/messages': (context) => const MessagesScreen(),
@@ -98,6 +99,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   User? _currentUser;
+  late UserManager _userManager;
 
   late List<Widget> _pages;
 
@@ -124,7 +126,16 @@ class _MainScreenState extends State<MainScreen> {
     if (user != null && user != _currentUser) {
       setState(() {
         _currentUser = user;
-        _pages[2] = ProfileScreen(user: _currentUser);
+        _userManager = UserManager(); // Initialize userManager here
+        _pages[3] = ProfileScreen(
+          user: _currentUser,
+          userManager: _userManager,
+          onUserUpdated: (updatedUser) {
+            setState(() {
+              _currentUser = updatedUser;
+            });
+          },
+        );
       });
     }
   }
@@ -137,6 +148,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Drawer _buildDrawer(BuildContext context) {
     return Drawer(
+      key: ValueKey(_currentUser?.id ?? 'no-user'),
       child: Column(
         children: [
           // 🔹 Header Drawer
@@ -193,7 +205,7 @@ class _MainScreenState extends State<MainScreen> {
                   title: const Text("Profile"),
                   onTap: () {
                     Navigator.pop(context); // tutup drawer
-                    Navigator.pushNamed(context, '/profile');
+                    setState(() => _selectedIndex = 3);
                   },
                 ),
                 ListTile(

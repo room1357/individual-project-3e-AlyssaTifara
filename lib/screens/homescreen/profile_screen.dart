@@ -1,15 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:pemrograman_mobile/models/user_model.dart';
+import 'package:pemrograman_mobile/logic/user_manager.dart';
+import 'package:pemrograman_mobile/screens/edit_profile_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   final User? user;
+  final UserManager? userManager;
+  final Function(User)? onUserUpdated;
 
-  const ProfileScreen({super.key, this.user});
+  const ProfileScreen({super.key, this.user, this.userManager, this.onUserUpdated});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  User? _currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUser = widget.user;
+  }
 
   // 🎨 Warna tema konsisten
   static const Color charcoal = Color(0xFF434D59); // abu elegan
   static const Color bone = Color(0xFFE1D9CC); // krem lembut
   static const Color maroon = Color(0xFF800000); // maroon elegan
+
+  void _editProfile() async {
+    if (_currentUser != null && widget.userManager != null) {
+      final updatedUser = await Navigator.push<User>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EditProfileScreen(
+            user: _currentUser!,
+            userManager: widget.userManager!,
+          ),
+        ),
+      );
+
+      if (updatedUser != null) {
+        setState(() {
+          _currentUser = updatedUser;
+        });
+        widget.onUserUpdated?.call(updatedUser);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +85,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 25),
               Text(
-                user?.fullName ?? "Nama Pengguna",
+                _currentUser?.fullName ?? "Nama Pengguna",
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w600,
@@ -56,7 +94,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                user?.email ?? "user@email.com",
+                _currentUser?.email ?? "user@email.com",
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.black54,
@@ -66,7 +104,7 @@ class ProfileScreen extends StatelessWidget {
 
               // 🔸 Tombol Edit: maroon background, bone text & icon
               ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: _editProfile,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: maroon,
                   padding:

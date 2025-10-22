@@ -28,4 +28,17 @@ class UserManager {
     }
     return null;
   }
+
+  void updateUser(String username, String fullName, String email, String password) {
+    for (int i = 0; i < _users.length; i++) {
+      if (_users[i].username == username) {
+        _users[i] = _users[i].copyWith(
+          fullName: fullName,
+          email: email,
+          password: password,
+        );
+        break;
+      }
+    }
+  }
 }
