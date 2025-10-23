@@ -28,18 +28,18 @@ Aplikasi ini sangat cocok sebagai latihan untuk memahami konsep-konsep Flutter s
 
 ## ✨ Fitur Aplikasi
 
-| Fitur / Screen | Screenshot | Penjelasan |
-|----------------|-----------|-------------|
-| **Login Screen** | Login | Halaman login untuk pengguna masuk ke aplikasi. Validasi email & password, diarahkan ke HomeScreen jika berhasil. |
-| **Register Screen** | Register | Halaman pembuatan akun baru. Data disimpan melalui `UserManager.addUser`. |
-| **Home Screen** | Home | Halaman utama setelah login, pusat navigasi ke semua fitur, termasuk Drawer profil & logout. |
-| **Item Screen** | Item | Menampilkan daftar item barang. Bisa menambah, mengedit, atau menghapus item. |
-| **Add Item Screen** | Add Item | Menambahkan item baru dengan nama, kategori, harga, dan tanggal. |
-| **Edit Item Screen** | Edit Item | Mengubah data item yang sudah ada. Konfirmasi sebelum menyimpan perubahan. |
-| **Category Screen** | Category | Mengelola kategori item. Bisa tambah atau hapus kategori dengan konfirmasi. |
-| **Statistics Screen** | Statistics | Menampilkan grafik & ringkasan total pengeluaran per kategori. |
-| **Export Screen** | Export | Mengekspor data item ke **CSV** atau **PDF**, bisa keseluruhan atau per kategori. |
-| **User Profile Screen** | Profile | Menampilkan & mengedit data profil pengguna, disimpan menggunakan SharedPreferences. |
+| Fitur / Screen  | Penjelasan |
+|----------------|-------------|
+| **Login Screen** | Halaman login untuk pengguna masuk ke aplikasi. Validasi email & password, diarahkan ke HomeScreen jika berhasil. |
+| **Register Screen** | Halaman pembuatan akun baru. Data disimpan melalui `UserManager.addUser`. |
+| **Home Screen** | Halaman utama setelah login, pusat navigasi ke semua fitur, termasuk Drawer profil & logout. |
+| **Item Screen** | Menampilkan daftar item barang. Bisa menambah, mengedit, atau menghapus item. |
+| **Add Item Screen** | Menambahkan item baru dengan nama, kategori, harga, dan tanggal. |
+| **Edit Item Screen** | Mengubah data item yang sudah ada. Konfirmasi sebelum menyimpan perubahan. |
+| **Category Screen** | Mengelola kategori item. Bisa tambah atau hapus kategori dengan konfirmasi. |
+| **Statistics Screen** | Menampilkan grafik & ringkasan total pengeluaran per kategori. |
+| **Export Screen** | Mengekspor data item ke **CSV** atau **PDF**, bisa keseluruhan atau per kategori. |
+| **User Profile Screen** | Menampilkan & mengedit data profil pengguna, disimpan menggunakan SharedPreferences. |
 
 ---
 
